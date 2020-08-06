@@ -16,7 +16,7 @@ Takes in an RGB Image as well as the corresponding depth image. The single chann
 A Semantically Segmented Image
 
 ## Demo
-demo with rgb-only data. run segmgment_video.py
+demo with rgb-only data. run segmgment_video.py or model_tester_multi_display.py for sample segmentation results with rgbd data.
 
 ## Results
 --work in progress
