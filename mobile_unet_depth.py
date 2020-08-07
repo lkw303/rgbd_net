@@ -16,10 +16,10 @@ import cv2
 IMG_SIZE = 192
 OUTPUT_CHANNELS = 7
 EPOCHS = 1000
-BATCH_SIZE = 
+BATCH_SIZE = 64
 
+depth_model = tf.keras.applications.MobileNetV2(input_shape=[IMG_SIZE, IMG_SIZE, 3], include_top=False)
 
-markdown live
 # Use the activations of these layers
 layer2_names = [
     'block_1_expand_relu',   # 64x64
@@ -56,7 +56,11 @@ up_stack = [
     pix2pix.upsample(128, 3),  # 16x16 -> 32x32
     pix2pix.upsample(64, 3),   # 32x32 -> 64x64
 ]
-markdown live
+def unet_model(output_channels):
+
+    inputs = tf.keras.layers.Input(shape=[IMG_SIZE,IMG_SIZE,3])
+    x = inputs
+
     inputs2 = tf.keras.layers.Input(shape=[IMG_SIZE,IMG_SIZE,3])
     x2 = inputs2
 
@@ -91,13 +95,13 @@ model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 0.000001),
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-weights_path = os.apth.join("./trained_weights", "depth_weights","train_depth_2.h5")
+weights_path = os.path.join("./trained_weights", "depth_weights","train_depth_2.h5")
 
 model.load_weights(weights_path)
 
 #===================================================================================
-train_image_path = os.path.join(os.path.expanduser("~"), "Desktop", "leftImg8bit_trainvaltest","leftImg8bit","train")
-train_depth_path = os.path.join(os.path.expanduser("~"), "Desktop", "disparity_trainvaltest","disparity", "train")
+train_image_path = os.path.join(os.path.expanduser("~"), "Desktop", "cityscape","leftImg8bit","train")
+train_depth_path = os.path.join(os.path.expanduser("~"), "Desktop", "cityscape","disparity_trainvaltest","disparity", "train")
 train_label_path = os.path.join(os.path.expanduser("~"), "Desktop","cityscape", "gtFine_trainvaltest","gtFine","train_encoding")
 
 
@@ -155,6 +159,7 @@ model_history = model.fit(X_train, Y_train,
                         verbose =1,
                         )
 
+model.save_weights(os.path.join("./", "trained_weights", "train_depth_3.h5"))
 model.save(os.path.join("./", "trained_weights", "train_depth_full_model_1.h5"))
 
 predict1 = model.predict(np.expand_dims(X_train[0], axis =0))
