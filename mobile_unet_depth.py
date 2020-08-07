@@ -12,11 +12,10 @@ import cv2
 
 
 
-
 IMG_SIZE = 192
 OUTPUT_CHANNELS = 7
-EPOCHS = 1000
-BATCH_SIZE = 64
+EPOCHS = 500
+BATCH_SIZE = 4
 
 depth_model = tf.keras.applications.MobileNetV2(input_shape=[IMG_SIZE, IMG_SIZE, 3], include_top=False)
 
