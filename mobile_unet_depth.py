@@ -8,26 +8,18 @@ import os
 import numpy as np
 import cv2
 
-train_data =[]
-val_data = []
 
-train_label_path = os.path.join(os.path.expanduser("~"),"Desktop","cityscape_archive","gtFine_new", "train_encoding")
-train_image_path = os.path.join(os.path.expanduser("~"),"Desktop","cityscape_archive","leftImg8bit", "train")
-train_depth_path = os.path.join(os.path.expanduser("~"), "Desktop", "disparity_trainvaltest","disparity", "train")
-val_label_path = os.path.join(os.path.expanduser("~"),"Desktop","cityscape_archive","gtFine_new", "val")
-val_image_path = os.path.join(os.path.expanduser("~"),"Desktop","cityscape_archive","leftImg8bit", "val")
+
 
 
 
 IMG_SIZE = 192
 OUTPUT_CHANNELS = 7
 EPOCHS = 1000
-BATCH_SIZE = 6
+BATCH_SIZE = 
 
 
-
-depth_model = tf.keras.applications.MobileNetV2(input_shape=[IMG_SIZE, IMG_SIZE, 3], include_top=False)
-
+markdown live
 # Use the activations of these layers
 layer2_names = [
     'block_1_expand_relu',   # 64x64
@@ -64,13 +56,7 @@ up_stack = [
     pix2pix.upsample(128, 3),  # 16x16 -> 32x32
     pix2pix.upsample(64, 3),   # 32x32 -> 64x64
 ]
-
-
-
-def unet_model(output_channels):
-    inputs = tf.keras.layers.Input(shape=[IMG_SIZE, IMG_SIZE, 3])
-    x = inputs
-
+markdown live
     inputs2 = tf.keras.layers.Input(shape=[IMG_SIZE,IMG_SIZE,3])
     x2 = inputs2
 
@@ -105,21 +91,15 @@ model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 0.000001),
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
+weights_path = os.apth.join("./trained_weights", "depth_weights","train_depth_2.h5")
+
+model.load_weights(weights_path)
 
 #===================================================================================
-def create_val_data():
-    for subdir in os.listdir(val_label_path):
-        city_label_folder_path = os.path.join(val_label_path,subdir)
-        city_image_folder_path = os.path.join(val_image_path,subdir)
-        for files in os.listdir(city_label_folder_path):
-            data_id = str(files)[:-len("_gtFine_polygons_encoding.png")]
-            print(data_id)
-            segmented_img = cv2.imread(os.path.join(os.path.join(city_label_folder_path,files)), cv2.IMREAD_COLOR)
-            photo_img = cv2.imread(os.path.join(city_image_folder_path,data_id + "_leftImg8bit.png"), cv2.IMREAD_COLOR)
+train_image_path = os.path.join(os.path.expanduser("~"), "Desktop", "leftImg8bit_trainvaltest","leftImg8bit","train")
+train_depth_path = os.path.join(os.path.expanduser("~"), "Desktop", "disparity_trainvaltest","disparity", "train")
+train_label_path = os.path.join(os.path.expanduser("~"), "Desktop","cityscape", "gtFine_trainvaltest","gtFine","train_encoding")
 
-            segmented_img = cv2.resize(segmented_img,(IMG_SIZE,IMG_SIZE))
-            photo_img = cv2.resize(photo_img, (IMG_SIZE,IMG_SIZE))
-            val_data.append([photo_resize,segmented_resize])
 
 
 X_train_img = []
@@ -154,15 +134,10 @@ def create_train_data():
 
 
 create_train_data()
-#create_depth_data()
-
-#create_val_data()
 
 
 
 
-
- 
 
 X_train_img = np.reshape(X_train_img,(-1, IMG_SIZE,IMG_SIZE,3))
 X_train_depth =np.reshape(X_train_depth,(-1, IMG_SIZE,IMG_SIZE,3))
@@ -175,12 +150,12 @@ Y_train = np.reshape(Y_train, (-1,IMG_SIZE,IMG_SIZE,1))
 
 model_history = model.fit(X_train, Y_train, 
                         batch_size = BATCH_SIZE,
-                        epochs = 300, 
+                        epochs = 1000, 
                         validation_split =0.1,
                         verbose =1,
                         )
 
-model.save(os.path.join("./", "trained_weights", "train_depth_4.h5"))
+model.save(os.path.join("./", "trained_weights", "train_depth_full_model_1.h5"))
 
 predict1 = model.predict(np.expand_dims(X_train[0], axis =0))
 
