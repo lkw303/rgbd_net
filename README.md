@@ -19,4 +19,8 @@ A Semantically Segmented Image
 demo with rgb-only data. run segmgment_video.py or model_tester_multi_display.py for sample segmentation results with rgbd data.
 
 ## Results
---work in progress
+--work in progress. Still requires training
+
+<img src = "images/example_results.png" width = "700"/>
+results thus far.
+
